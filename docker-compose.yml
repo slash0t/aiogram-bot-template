@@ -18,6 +18,23 @@ services:
     volumes:
       - ./postgres:/var/lib/postgresql
 
+  django:
+    container_name: django
+    build:
+      context: .
+    command: python3 django_app.py runserver 0.0.0.0:8000 --noreload
+    ports:
+      - 8000:8000
+    networks:
+      - botnet
+    restart: always
+    env_file:
+      - ".env"
+    volumes:
+      - .:/src
+    depends_on:
+      - db
+
   redis:
     container_name: redis_parse_bot
     image: redis
@@ -44,6 +61,7 @@ services:
       - .:/src
     depends_on:
       - db
+      - django
       - redis
 
 networks:
